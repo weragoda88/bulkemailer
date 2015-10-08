@@ -1,0 +1,111 @@
+﻿@model  EmailStatusChecker.Models.HomeModel
+@{
+    ViewBag.Title = "Home Page";
+}
+<div class="mainWrapper">
+    <h2 class="bold">Email settings:</h2>
+    <div class="fieldGap"></div>
+    <div class="divTable txtTwoCol emailStatusTable checkBoxGroup">
+        @foreach (var item in Model.settings)
+        {
+            <div class="divRow">
+                <div class="divCell divName alignVMiddle">@Html.DisplayFor(modelItem => item.key)</div>
+                <div class="divCell divContent alignVMiddle"><span>@item.value</span></div>
+            </div>
+        }
+
+    </div>
+    <div class="verticalSep"></div>
+    <h2 class="bold">Email status:</h2>
+    <div class="fieldGap"></div>
+    <div class="divTable txtTwoCol emailStatusTable checkBoxGroup">
+        <div class="divRow">
+            <div class="divCell divName alignVMiddle">Awaiting to be sent</div>
+            <div class="divCell divContent alignVMiddle"><span>@Model.summary.AwaitingToSent</span></div>
+        </div>
+        <div class="divRow">
+            <div class="divCell divName alignVMiddle">Awaiting to be sent (re-trying)</div>
+            <div class="divCell divContent alignVMiddle"><span>@Model.summary.AwaitingToSentfaild</span></div>
+        </div>
+        <div class="divRow">
+            <div class="divCell divName alignVMiddle">In process of sending</div>
+            <div class="divCell divContent alignVMiddle"><span>@Model.summary.InProcessOfSending</span></div>
+        </div>
+        <div class="divRow">
+            <div class="divCell divName alignVMiddle">Successfully sent</div>
+            <div class="divCell divContent alignVMiddle"><span>@Model.summary.SuccessfullySent</span></div>
+        </div>
+        <div class="divRow">
+            <div class="divCell divName alignVMiddle">Failed</div>
+            <div class="divCell divContent alignVMiddle"><span>@Model.summary.SendFail</span></div>
+        </div>
+    </div>
+    <div class="verticalSep"></div>
+
+    <h2 class="bold">Emails for "<span class="italic">Emails are awaiting to be sent</span>":</h2>
+    <div class="fieldGap"></div>
+
+    <div class="checkBoxGroup">
+        <div class="searchWrap">
+            <label class="paddingRight10">Search by: </label>
+            <select>
+                @*<option>Company name</option>*@
+                <option>Email</option>
+            </select>
+            <input type="text" class="searchField">
+            <input type="submit" value="Search">
+        </div>
+        <div class="fieldGap"></div>
+
+        <div class="divTable txtTwoCol emailListTable">
+            <div class="divRow headingRow">
+                @*<div class="divCell"><input type="checkbox" title="Select all"></div>*@
+                <div class="divCell emailCol">Send from</div>
+                <div class="divCell emailCol">Send to</div>
+                <div class="divCell nameCol">Sender's name</div>
+                <div class="divCell nameCol">Receiver's name</div>
+                <div class="divCell subjectCol">Subject</div>
+                <div class="divCell emailCol">Cc(s)</div>
+                <div class="divCell emailCol">Bcc(s)</div>
+                <div class="divCell dateCol">Due date</div>
+            </div>
+            @foreach (var item in Model.penddingEmails)
+            {
+                <div class="divRow">
+                    @*<div class="divCell"><input type="checkbox"></div>*@
+                    <div class="divCell emailCol">@item.tbl_email_awaiting_details.str_from_address</div>
+                    <div class="divCell emailCol">
+                        @foreach (var toemail in item.tbl_email_to_address.Where(a => a.int_type == 1))
+                        {
+                            @toemail.str_email_address ;
+                        }
+                    </div>
+                    <div class="divCell nameCol">@item.tbl_email_awaiting_details.str_from_name</div>
+                    <div class="divCell nameCol">
+                        @foreach (var toemail in item.tbl_email_to_address.Where(a => a.int_type == 1))
+                        {
+                            @toemail.str_email_name ;
+                        }
+                    </div>
+                    <div class="divCell subjectCol">@item.tbl_email_awaiting_details.str_subject</div>
+                    <div class="divCell emailCol">
+                        @foreach (var toemail in item.tbl_email_to_address.Where(a => a.int_type == 2))
+                        {
+                            @toemail.str_email_address <span>(@toemail.str_email_name) </span>;
+                        }
+                    </div>
+                    <div class="divCell emailCol">
+                        @foreach (var toemail in item.tbl_email_to_address.Where(a => a.int_type == 3))
+                        {
+                            @toemail.str_email_address <span>(@toemail.str_email_name) </span>;
+                        }
+                    </div>
+                    <div class="divCell dateCol">@item.dt_due_date</div>
+                </div>
+            }
+
+        </div>
+        <div class="fieldGap"></div>
+        @*<input type="submit" value="Delete">*@
+    </div>
+</div>

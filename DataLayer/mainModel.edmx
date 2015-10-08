@@ -1,0 +1,355 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="E_MailerMainDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="tbl_email_attachment">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="str_file_path" Type="varchar(max)" />
+          <Property Name="bit_attached" Type="bit" />
+          <Property Name="int_email_detail_id" Type="bigint" />
+          <Property Name="str_error" Type="nvarchar" MaxLength="555" />
+        </EntityType>
+        <EntityType Name="tbl_email_awaiting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="int_status" Type="int" />
+          <Property Name="str_error" Type="nvarchar" MaxLength="555" />
+          <Property Name="dt_due_date" Type="datetime" />
+          <Property Name="dt_inserted_date" Type="datetime" />
+          <Property Name="dt_send_date" Type="datetime" />
+          <Property Name="dt_expire_date" Type="datetime" />
+          <Property Name="int_failed_count" Type="int" />
+          <Property Name="int_email_detail_id" Type="bigint" />
+        </EntityType>
+        <EntityType Name="tbl_email_awaiting_details">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="str_subject" Type="nvarchar" MaxLength="255" />
+          <Property Name="str_body" Type="text" />
+          <Property Name="str_from_address" Type="varchar" MaxLength="255" />
+          <Property Name="str_from_name" Type="nvarchar" MaxLength="255" />
+          <Property Name="dt_inserted_date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tbl_email_to_address">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="str_email_address" Type="varchar" MaxLength="255" />
+          <Property Name="str_email_name" Type="varchar" MaxLength="255" />
+          <Property Name="int_type" Type="int" />
+          <Property Name="int_email_id" Type="bigint" />
+        </EntityType>
+        <EntityType Name="tbl_setting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="key" Type="varchar" MaxLength="255" />
+          <Property Name="value" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <Association Name="FK_tbl_email_attachment_tbl_email_awaiting_details">
+          <End Role="tbl_email_awaiting_details" Type="Self.tbl_email_awaiting_details" Multiplicity="0..1" />
+          <End Role="tbl_email_attachment" Type="Self.tbl_email_attachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_email_awaiting_details">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_email_attachment">
+              <PropertyRef Name="int_email_detail_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_email_awaiting_tbl_email_awaiting_details">
+          <End Role="tbl_email_awaiting_details" Type="Self.tbl_email_awaiting_details" Multiplicity="0..1" />
+          <End Role="tbl_email_awaiting" Type="Self.tbl_email_awaiting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_email_awaiting_details">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_email_awaiting">
+              <PropertyRef Name="int_email_detail_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_email_to_address_tbl_email_awaiting">
+          <End Role="tbl_email_awaiting" Type="Self.tbl_email_awaiting" Multiplicity="0..1" />
+          <End Role="tbl_email_to_address" Type="Self.tbl_email_to_address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_email_awaiting">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_email_to_address">
+              <PropertyRef Name="int_email_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="E_MailerMainDBModelStoreContainer">
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_email_attachment" EntityType="Self.tbl_email_attachment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_email_awaiting" EntityType="Self.tbl_email_awaiting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_email_awaiting_details" EntityType="Self.tbl_email_awaiting_details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_email_to_address" EntityType="Self.tbl_email_to_address" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_setting" EntityType="Self.tbl_setting" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tbl_email_attachment_tbl_email_awaiting_details" Association="Self.FK_tbl_email_attachment_tbl_email_awaiting_details">
+            <End Role="tbl_email_awaiting_details" EntitySet="tbl_email_awaiting_details" />
+            <End Role="tbl_email_attachment" EntitySet="tbl_email_attachment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_email_awaiting_tbl_email_awaiting_details" Association="Self.FK_tbl_email_awaiting_tbl_email_awaiting_details">
+            <End Role="tbl_email_awaiting_details" EntitySet="tbl_email_awaiting_details" />
+            <End Role="tbl_email_awaiting" EntitySet="tbl_email_awaiting" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_email_to_address_tbl_email_awaiting" Association="Self.FK_tbl_email_to_address_tbl_email_awaiting">
+            <End Role="tbl_email_awaiting" EntitySet="tbl_email_awaiting" />
+            <End Role="tbl_email_to_address" EntitySet="tbl_email_to_address" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="E_MailerMainDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="tbl_email_attachment">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="str_file_path" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="bit_attached" Type="Boolean" />
+          <Property Name="int_email_detail_id" Type="Int64" />
+          <Property Name="str_error" Type="String" MaxLength="555" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tbl_email_awaiting_details" Relationship="Self.FK_tbl_email_attachment_tbl_email_awaiting_details" FromRole="tbl_email_attachment" ToRole="tbl_email_awaiting_details" />
+        </EntityType>
+        <EntityType Name="tbl_email_awaiting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="int_status" Type="Int32" />
+          <Property Name="str_error" Type="String" MaxLength="555" FixedLength="false" Unicode="true" />
+          <Property Name="dt_due_date" Type="DateTime" Precision="3" />
+          <Property Name="dt_inserted_date" Type="DateTime" Precision="3" />
+          <Property Name="dt_send_date" Type="DateTime" Precision="3" />
+          <Property Name="dt_expire_date" Type="DateTime" Precision="3" />
+          <Property Name="int_failed_count" Type="Int32" />
+          <Property Name="int_email_detail_id" Type="Int64" />
+          <NavigationProperty Name="tbl_email_awaiting_details" Relationship="Self.FK_tbl_email_awaiting_tbl_email_awaiting_details" FromRole="tbl_email_awaiting" ToRole="tbl_email_awaiting_details" />
+          <NavigationProperty Name="tbl_email_to_address" Relationship="Self.FK_tbl_email_to_address_tbl_email_awaiting" FromRole="tbl_email_awaiting" ToRole="tbl_email_to_address" />
+        </EntityType>
+        <EntityType Name="tbl_email_awaiting_details">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="str_subject" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="str_body" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="str_from_address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="str_from_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="dt_inserted_date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="tbl_email_attachment" Relationship="Self.FK_tbl_email_attachment_tbl_email_awaiting_details" FromRole="tbl_email_awaiting_details" ToRole="tbl_email_attachment" />
+          <NavigationProperty Name="tbl_email_awaiting" Relationship="Self.FK_tbl_email_awaiting_tbl_email_awaiting_details" FromRole="tbl_email_awaiting_details" ToRole="tbl_email_awaiting" />
+        </EntityType>
+        <EntityType Name="tbl_email_to_address">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="str_email_address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="str_email_name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="int_type" Type="Int32" />
+          <Property Name="int_email_id" Type="Int64" />
+          <NavigationProperty Name="tbl_email_awaiting" Relationship="Self.FK_tbl_email_to_address_tbl_email_awaiting" FromRole="tbl_email_to_address" ToRole="tbl_email_awaiting" />
+        </EntityType>
+        <EntityType Name="tbl_setting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="key" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_tbl_email_attachment_tbl_email_awaiting_details">
+          <End Role="tbl_email_awaiting_details" Type="Self.tbl_email_awaiting_details" Multiplicity="0..1" />
+          <End Role="tbl_email_attachment" Type="Self.tbl_email_attachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_email_awaiting_details">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_email_attachment">
+              <PropertyRef Name="int_email_detail_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_email_awaiting_tbl_email_awaiting_details">
+          <End Role="tbl_email_awaiting_details" Type="Self.tbl_email_awaiting_details" Multiplicity="0..1" />
+          <End Role="tbl_email_awaiting" Type="Self.tbl_email_awaiting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_email_awaiting_details">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_email_awaiting">
+              <PropertyRef Name="int_email_detail_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_email_to_address_tbl_email_awaiting">
+          <End Role="tbl_email_awaiting" Type="Self.tbl_email_awaiting" Multiplicity="0..1" />
+          <End Role="tbl_email_to_address" Type="Self.tbl_email_to_address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_email_awaiting">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_email_to_address">
+              <PropertyRef Name="int_email_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="E_MailerMainDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="tbl_email_attachment" EntityType="Self.tbl_email_attachment" />
+          <EntitySet Name="tbl_email_awaiting" EntityType="Self.tbl_email_awaiting" />
+          <EntitySet Name="tbl_email_awaiting_details" EntityType="Self.tbl_email_awaiting_details" />
+          <EntitySet Name="tbl_email_to_address" EntityType="Self.tbl_email_to_address" />
+          <EntitySet Name="tbl_setting" EntityType="Self.tbl_setting" />
+          <AssociationSet Name="FK_tbl_email_attachment_tbl_email_awaiting_details" Association="Self.FK_tbl_email_attachment_tbl_email_awaiting_details">
+            <End Role="tbl_email_awaiting_details" EntitySet="tbl_email_awaiting_details" />
+            <End Role="tbl_email_attachment" EntitySet="tbl_email_attachment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_email_awaiting_tbl_email_awaiting_details" Association="Self.FK_tbl_email_awaiting_tbl_email_awaiting_details">
+            <End Role="tbl_email_awaiting_details" EntitySet="tbl_email_awaiting_details" />
+            <End Role="tbl_email_awaiting" EntitySet="tbl_email_awaiting" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_email_to_address_tbl_email_awaiting" Association="Self.FK_tbl_email_to_address_tbl_email_awaiting">
+            <End Role="tbl_email_awaiting" EntitySet="tbl_email_awaiting" />
+            <End Role="tbl_email_to_address" EntitySet="tbl_email_to_address" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="E_MailerMainDBModelStoreContainer" CdmEntityContainer="E_MailerMainDBEntities">
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="E_MailerMainDBModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_email_attachment">
+            <EntityTypeMapping TypeName="E_MailerMainDBModel.tbl_email_attachment">
+              <MappingFragment StoreEntitySet="tbl_email_attachment">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="str_file_path" ColumnName="str_file_path" />
+                <ScalarProperty Name="bit_attached" ColumnName="bit_attached" />
+                <ScalarProperty Name="int_email_detail_id" ColumnName="int_email_detail_id" />
+                <ScalarProperty Name="str_error" ColumnName="str_error" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_email_awaiting">
+            <EntityTypeMapping TypeName="E_MailerMainDBModel.tbl_email_awaiting">
+              <MappingFragment StoreEntitySet="tbl_email_awaiting">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="int_status" ColumnName="int_status" />
+                <ScalarProperty Name="str_error" ColumnName="str_error" />
+                <ScalarProperty Name="dt_due_date" ColumnName="dt_due_date" />
+                <ScalarProperty Name="dt_inserted_date" ColumnName="dt_inserted_date" />
+                <ScalarProperty Name="dt_send_date" ColumnName="dt_send_date" />
+                <ScalarProperty Name="dt_expire_date" ColumnName="dt_expire_date" />
+                <ScalarProperty Name="int_failed_count" ColumnName="int_failed_count" />
+                <ScalarProperty Name="int_email_detail_id" ColumnName="int_email_detail_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_email_awaiting_details">
+            <EntityTypeMapping TypeName="E_MailerMainDBModel.tbl_email_awaiting_details">
+              <MappingFragment StoreEntitySet="tbl_email_awaiting_details">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="str_subject" ColumnName="str_subject" />
+                <ScalarProperty Name="str_body" ColumnName="str_body" />
+                <ScalarProperty Name="str_from_address" ColumnName="str_from_address" />
+                <ScalarProperty Name="str_from_name" ColumnName="str_from_name" />
+                <ScalarProperty Name="dt_inserted_date" ColumnName="dt_inserted_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_email_to_address">
+            <EntityTypeMapping TypeName="E_MailerMainDBModel.tbl_email_to_address">
+              <MappingFragment StoreEntitySet="tbl_email_to_address">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="str_email_address" ColumnName="str_email_address" />
+                <ScalarProperty Name="str_email_name" ColumnName="str_email_name" />
+                <ScalarProperty Name="int_type" ColumnName="int_type" />
+                <ScalarProperty Name="int_email_id" ColumnName="int_email_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_setting">
+            <EntityTypeMapping TypeName="E_MailerMainDBModel.tbl_setting">
+              <MappingFragment StoreEntitySet="tbl_setting">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="key" ColumnName="key" />
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
